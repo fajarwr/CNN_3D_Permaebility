@@ -156,12 +156,19 @@ total_result = model.predict_generator(generator=total_generator, steps=None,
 
 #Plot the training data
 plt.figure()
-plt.scatter(np.arange(0,training_list),k_norm[:training_list])
-plt.scatter(np.arange(0,training_list),total_result[:training_list])
+plt.scatter(np.arange(0,training_list),k_norm[:training_list]*np.max(k), label='$\kappa$ true')
+plt.scatter(np.arange(0,training_list),total_result[:training_list]*np.max(k), label='$\kappa$ pred')
+plt.title('Permeabilitas Kozeny Carman vs CNN Data Training')
+plt.xlabel('Subampel')
+plt.ylabel('$\phi^3/ssa^2$')
+plt.legend()
 
 #Plot the testing data
 plt.figure()
-plt.scatter(np.arange(0,testing_list),k_norm[training_list:total_list])
-plt.scatter(np.arange(0,testing_list),total_result[training_list:total_list])
-
+plt.scatter(np.arange(0,testing_list),k_norm[training_list:total_list]*np.max(k), label='$\kappa$ true')
+plt.scatter(np.arange(0,testing_list),total_result[training_list:total_list]*np.max(k), label='$\kappa$ pred')
+plt.title('Permeabilitas Kozeny Carman vs CNN Data Testing')
+plt.xlabel('Subsampel')
+plt.ylabel('$\phi^3/ssa^2$')
+plt.legend()
 
