@@ -37,11 +37,14 @@ from my_classes_001 import DataGenerator
 
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
+training_list = 90
+testing_list = 10
+total_list = training_list + testing_list
 image3D_stack = []
 phi = []
 ssa = []
 os.chdir('..\\002_Data\\Berea Sandstone')
-for image3D_dir in os.listdir(os.getcwd())[:100]:
+for image3D_dir in os.listdir(os.getcwd())[:total_list]:
     phi.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
                 image3D_dir)][1])
     ssa.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
@@ -64,14 +67,16 @@ params = {'dim': (dim1,dim2,dim3),
 
 #Datasets
 partition = {
-		'train': os.listdir(os.getcwd())[:90],
-		'validation': os.listdir(os.getcwd())[90:100]
+		'train': os.listdir(os.getcwd())[:training_list],
+		'validation': os.listdir(os.getcwd())[training_list:total_list],
+        'total' : os.listdir(os.getcwd())[:total_list]
 		}
-labels = dict(zip(os.listdir(os.getcwd())[:100], k_norm))
+labels = dict(zip(os.listdir(os.getcwd())[:total_list], k_norm))
 
 # Generators
 training_generator = DataGenerator(partition['train'], labels, **params)
 validation_generator = DataGenerator(partition['validation'], labels, **params)
+total_generator = DataGenerator(partition['total'], labels, **params)
 
 #Define a model
 model = Sequential()
@@ -137,29 +142,27 @@ os.chdir(sys.path[0])
 os.chdir('..\\002_Data\\Berea Sandstone npy')
 
 # Train model on dataset
-history = model.fit_generator(generator=training_generator,
-                    epochs=20,
-                    validation_data=validation_generator,
-                    callbacks=[checkpoint],
-                    use_multiprocessing=False)
+history = model.fit_generator(generator=training_generator, epochs=20,
+                    callbacks=[checkpoint], use_multiprocessing=False)
 
 #Load the model and plot the data
 model.load_weights('weights4.hdf5')
 
-testing_training = model.predict_generator(generator=training_generator, steps=None,
+#Store the training & testing result
+total_result = model.predict_generator(generator=total_generator, steps=None,
                                   max_queue_size=10, workers=1,
                                   use_multiprocessing=False, verbose=0)
 
-testing_validation = model.predict_generator(generator=validation_generator, steps=None,
-                                  max_queue_size=10, workers=1,
-                                  use_multiprocessing=False, verbose=0)
-
+total_result[:training_list]
+total_result[training_list:total_list]
+#Plot the training data
 plt.figure()
-plt.scatter(np.arange(0,len(testing_training)),k_norm[:len(testing_training)])
-plt.scatter(np.arange(0,len(testing_training)),testing_training)
+plt.scatter(np.arange(0,training_list),k_norm[:training_list])
+plt.scatter(np.arange(0,training_list),total_result[:training_list])
 
+#Plot the testing data
 plt.figure()
-plt.scatter(np.arange(0,len(testing_validation)),k_norm[:len(testing_validation)])
-plt.scatter(np.arange(0,len(testing_validation)),testing_validation)
+plt.scatter(np.arange(0,testing_list),k_norm[training_list:total_list])
+plt.scatter(np.arange(0,testing_list),total_result[training_list:total_list])
 
 
