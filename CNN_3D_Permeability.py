@@ -31,8 +31,9 @@ def r2_keras(y_true, y_pred):
 #Change to script directory
 os.chdir(sys.path[0])
 sys.path.append(os.getcwd())
-#Import datagenerator
-from my_classes_001 import DataGenerator
+#Import datagenerator taken from 
+#https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
+from DataGenerator_3D_Classes import DataGenerator
 
 
 #Load the data
@@ -153,8 +154,6 @@ total_result = model.predict_generator(generator=total_generator, steps=None,
                                   max_queue_size=10, workers=1,
                                   use_multiprocessing=False, verbose=0)
 
-total_result[:training_list]
-total_result[training_list:total_list]
 #Plot the training data
 plt.figure()
 plt.scatter(np.arange(0,training_list),k_norm[:training_list])
