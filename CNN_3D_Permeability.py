@@ -21,25 +21,22 @@ from sklearn.model_selection import train_test_split
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
 
-
+#Define r square matric
 def r2_keras(y_true, y_pred):
     SS_res =  K.sum(K.square(y_true - y_pred)) 
     SS_tot = K.sum(K.square(y_true - K.mean(y_true)))
     return ( 1 - SS_res/(SS_tot + K.epsilon()) )
 
 
-#Change to 001_Python_Codes directory
-os.chdir('E:\\Fajar\\CNN_Permeability\\001_PythonCodes')
+#Change to script directory
+os.chdir(sys.path[0])
 sys.path.append(os.getcwd())
 #Import datagenerator
 from my_classes_001 import DataGenerator
 
-#Change to script directory
-
 
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
-#dim1,dim2,dim3,chn = 150,150,150,1
 image3D_stack = []
 phi = []
 ssa = []
@@ -51,9 +48,8 @@ for image3D_dir in os.listdir(os.getcwd())[:100]:
                 image3D_dir)][2])
 k = np.power(1-np.array(phi), 3)/np.power(ssa, 2)
 k_norm = k/np.max(k)
-#Split the data
-#X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.1,
-#                                                  random_state=42)
+
+#Plot the data
 #plt.scatter(np.arange(1,9262),k[:9261], s = 3)
 #
 #plt.scatter((1-np.array(phi)),k)
@@ -76,8 +72,6 @@ labels = dict(zip(os.listdir(os.getcwd())[:100], k_norm))
 # Generators
 training_generator = DataGenerator(partition['train'], labels, **params)
 validation_generator = DataGenerator(partition['validation'], labels, **params)
-
-
 
 #Define a model
 model = Sequential()
@@ -134,26 +128,23 @@ model.add(Dense(1, activation=None, use_bias=True,
 model.compile(optimizer='Adam', loss='mean_squared_error', metrics=[r2_keras],
               loss_weights=None, sample_weight_mode=None,weighted_metrics=None,
               target_tensors=None)
-#Train the model
-#model.fit(X_train, y_train, batch_size=10, epochs=1, verbose=1,
-#          callbacks=None, validation_split=0.0, validation_data=None,
-#          shuffle=True, class_weight=None, sample_weight=None, initial_epoch=0,
-#          steps_per_epoch=None, validation_steps=None)
 
-# This checkpoint object will store the model parameters in the file "weights.hdf5"
-checkpoint = ModelCheckpoint(filepath='weights3.hdf5', monitor='val_loss')
+#This checkpoint object will store the model parameters in the file "weights.hdf5"
+checkpoint = ModelCheckpoint(filepath='weights4.hdf5', monitor='val_loss')
 
+#Change to data directory
+os.chdir(sys.path[0])
+os.chdir('..\\002_Data\\Berea Sandstone npy')
 
-os.chdir('E:\\Fajar\\CNN_Permeability\\002_Data\\Berea Sandstone npy')
 # Train model on dataset
-model.fit_generator(generator=training_generator,
-                    epochs=100,
+history = model.fit_generator(generator=training_generator,
+                    epochs=20,
                     validation_data=validation_generator,
                     callbacks=[checkpoint],
                     use_multiprocessing=False)
 
-
-model.load_weights('weights3.hdf5')
+#Load the model and plot the data
+model.load_weights('weights4.hdf5')
 
 testing_training = model.predict_generator(generator=training_generator, steps=None,
                                   max_queue_size=10, workers=1,
