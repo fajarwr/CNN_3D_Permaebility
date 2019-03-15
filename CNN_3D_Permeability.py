@@ -140,7 +140,7 @@ checkpoint = ModelCheckpoint(filepath='weights4.hdf5', monitor='val_loss')
 
 #Change to data directory
 os.chdir(sys.path[0])
-os.chdir('..\\002_Data\\Berea Sandstone npy')
+os.chdir('..\\002_Data\\Berea_Sandstone_npy')
 
 # Train model on dataset
 history = model.fit_generator(generator=training_generator, epochs=20,
