@@ -153,6 +153,10 @@ os.chdir('..\\002_Data\\Berea_Sandstone_npy')
 history = model.fit_generator(generator=training_generator, epochs=20,
                     callbacks=[checkpoint], use_multiprocessing=False)
 
+#Save history
+history_df = pd.DataFrame.from_dict(history.history)
+history_df.to_excel('..\\..\\005_Result\\History_CNN3D_002.xlsx')
+
 #Load the model and plot the data
 model.load_weights('weights4.hdf5')
 
