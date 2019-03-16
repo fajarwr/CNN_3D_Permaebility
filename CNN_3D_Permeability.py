@@ -183,3 +183,20 @@ plt.xlabel('Subsampel')
 plt.ylabel('$\phi^3/ssa^2$')
 plt.legend()
 
+#PLot history MSE
+plt.figure()
+plt.plot(history.history['loss'])
+plt.title('PLot Nilai Mean Square Error untuk Setiap Epoch')
+plt.xlabel('Epoch')
+plt.ylabel('MSE')
+plt.show()
+
+#Plot history r2_keras
+plt.figure()
+plt.plot(history.history['r2_keras'])
+plt.title('PLot Nilai $R^2$ untuk Setiap Epoch')
+plt.xlabel('Epoch')
+plt.ylabel('$R^2$')
+plt.show()
+
+
