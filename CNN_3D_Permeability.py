@@ -165,6 +165,18 @@ total_result = model.predict_generator(generator=total_generator, steps=None,
                                   max_queue_size=10, workers=1,
                                   use_multiprocessing=False, verbose=0)
 
+#Save result
+training_result = {
+		'true_training': k_norm[:training_list]*np.max(k),
+		'pred_training': total_result[:training_list]*np.max(k)
+		}
+testing_result = {
+        'true_testing': k_norm[training_list:total_list]*np.max(k),
+		'pred_testing': total_result[training_list:total_list]*np.max(k)
+        }
+training_result_df = pd.DataFrame.from_dict(training_result)
+testing_result_df = pd.DataFrame.from_dict(testing_result)
+
 #Plot the training data
 plt.figure()
 plt.scatter(np.arange(0,training_list),k_norm[:training_list]*np.max(k), label='$\kappa$ true')
