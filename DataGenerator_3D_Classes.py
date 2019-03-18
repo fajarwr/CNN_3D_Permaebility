@@ -52,7 +52,8 @@ class DataGenerator(keras.utils.Sequence):
         #Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
-            X_temp = np.load(ID+'.npy')
+#            X_temp = np.load(ID+'.npy')
+            X_temp = np.load(ID)
             X_temp = X_temp/np.max(X_temp)            
             X_temp = X_temp.reshape((self.dim[0], self.dim[1], self.dim[2], 1))
             X[i,] = X_temp
