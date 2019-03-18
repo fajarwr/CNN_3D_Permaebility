@@ -34,6 +34,9 @@ sys.path.append(os.getcwd())
 #https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 from DataGenerator_3D_Classes import DataGenerator
 
+#Experiment number
+exp_num = 3
+
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
 training_len = 90
@@ -140,7 +143,7 @@ model.compile(optimizer='Adam', loss='mean_squared_error', metrics=[r2_keras],
               target_tensors=None)
 
 #This checkpoint object will store the model parameters in the file "weights.hdf5"
-checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_002.hdf5', monitor='val_loss')
+checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'.hdf5', monitor='val_loss')
 
 #Change to data directory
 os.chdir(sys.path[0])
@@ -152,10 +155,10 @@ history = model.fit_generator(generator=training_generator, epochs=20,
 
 #Save history
 history_df = pd.DataFrame.from_dict(history.history)
-history_df.to_excel('..\\..\\005_Result\\History_CNN3D_002.xlsx')
+history_df.to_excel('..\\..\\005_Result\\History_CNN3D_00'+str(exp_num)+'.xlsx')
 
 #Load the model and plot the data
-model.load_weights('..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_002.hdf5')
+model.load_weights('..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'.hdf5')
 
 #Store the training & testing result
 total_result = model.predict_generator(generator=total_generator, steps=None,
@@ -173,8 +176,8 @@ testing_result = {
         }
 training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
-training_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Training_CNN3D_002.xlsx')
-testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_002.xlsx')
+training_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Training_CNN3D_00'+str(exp_num)+'.xlsx')
+testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_00'+str(exp_num)+'.xlsx')
 
 
 #Plot the training data
