@@ -143,7 +143,7 @@ model.compile(optimizer='Adam', loss='mean_squared_error', metrics=[r2_keras],
               target_tensors=None)
 
 #This checkpoint object will store the model parameters in the file "weights.hdf5"
-checkpoint = ModelCheckpoint(filepath='weights4.hdf5', monitor='val_loss')
+checkpoint = ModelCheckpoint(filepath='\\weights4.hdf5', monitor='val_loss')
 
 #Change to data directory
 os.chdir(sys.path[0])
@@ -167,15 +167,18 @@ total_result = model.predict_generator(generator=total_generator, steps=None,
 
 #Save result
 training_result = {
-		'true_training': k_norm[:training_list]*np.max(k),
-		'pred_training': total_result[:training_list]*np.max(k)
+		'true_training': np.reshape(k_norm[:training_list]*np.max(k),(training_list,)),
+		'pred_training': np.reshape(total_result[:training_list]*np.max(k),(training_list,))
 		}
 testing_result = {
-        'true_testing': k_norm[training_list:total_list]*np.max(k),
-		'pred_testing': total_result[training_list:total_list]*np.max(k)
+        'true_testing': np.reshape(k_norm[training_list:total_list]*np.max(k),(testing_list,)),
+		'pred_testing': np.reshape(total_result[training_list:total_list]*np.max(k),(testing_list,))
         }
 training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
+training_result_df.to_excel('..\\..\\005_Result\\Training_CNN3D_002.xlsx')
+testing_result_df.to_excel('..\\..\\005_Result\\Testing_CNN3D_002.xlsx')
+
 
 #Plot the training data
 plt.figure()
