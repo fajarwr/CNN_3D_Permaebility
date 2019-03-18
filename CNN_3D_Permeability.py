@@ -16,7 +16,7 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import re
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, r2_score
 from sklearn.model_selection import train_test_split
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
@@ -35,21 +35,20 @@ sys.path.append(os.getcwd())
 from DataGenerator_3D_Classes import DataGenerator
 
 #Experiment number
-exp_num = 2
-os.chdir('..\\..\\005_Result\\CNN_3D')
-
-if any('00'+exp_num in s for s in os.listdir(os.getcwd())):
+exp_num = 3
+os.chdir('..\\005_Result\\CNN_3D')
+if any('00'+str(exp_num) in s for s in os.listdir(os.getcwd())):
     sys.exit('Alert : There is already 00'+str(exp_num)+' experiment result!!')
 
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
 training_len = 90
 testing_len = 10
-total_len = training_len + training_len
+total_len = training_len + testing_len
 phi = []
 ssa = []
 os.chdir('..\\002_Data\\Berea_Sandstone_npy')
-for image3D_npy in os.listdir(os.getcwd())[:training_len]:
+for image3D_npy in os.listdir(os.getcwd())[:total_len]:
     phi.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
                 image3D_npy)][1])
     ssa.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
@@ -73,10 +72,10 @@ params = {'dim': (dim1,dim2,dim3),
 #Datasets
 partition = {
 		'train': os.listdir(os.getcwd())[:training_len],
-		'validation': os.listdir(os.getcwd())[training_len:training_len],
-        'total' : os.listdir(os.getcwd())[:training_len]
+		'validation': os.listdir(os.getcwd())[training_len:total_len],
+        'total' : os.listdir(os.getcwd())[:total_len]
 		}
-labels = dict(zip(os.listdir(os.getcwd())[:training_len], k_norm))
+labels = dict(zip(os.listdir(os.getcwd())[:total_len], k_norm))
 
 # Generators
 training_generator = DataGenerator(partition['train'], labels, **params)
@@ -92,6 +91,13 @@ model.add(Conv3D(32, kernel_size=5, strides=(2, 2, 2), padding='valid',
                  kernel_regularizer=None, bias_regularizer=None, 
                  activity_regularizer=None, kernel_constraint=None,
                  bias_constraint=None, input_shape=(dim1, dim2, dim3, chn)))
+model.add(Conv3D(32, kernel_size=5, strides=(2, 2, 2), padding='valid',
+                 data_format='channels_last', dilation_rate=(1, 1, 1),
+                 activation='relu', use_bias=True,
+                 kernel_initializer='glorot_uniform', bias_initializer='zeros',
+                 kernel_regularizer=None, bias_regularizer=None, 
+                 activity_regularizer=None, kernel_constraint=None,
+                 bias_constraint=None))
 model.add(Conv3D(32, kernel_size=5, strides=(2, 2, 2), padding='valid',
                  data_format='channels_last', dilation_rate=(1, 1, 1),
                  activation='relu', use_bias=True,
@@ -175,8 +181,8 @@ training_result = {
 		'pred_training': np.reshape(total_result[:training_len]*np.max(k),(training_len,))
 		}
 testing_result = {
-        'true_testing': np.reshape(k_norm[training_len:training_len]*np.max(k),(training_len,)),
-		'pred_testing': np.reshape(total_result[training_len:training_len]*np.max(k),(training_len,))
+        'true_testing': np.reshape(k_norm[training_len:total_len]*np.max(k),(testing_len,)),
+		'pred_testing': np.reshape(total_result[training_len:total_len]*np.max(k),(testing_len,))
         }
 training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
@@ -195,8 +201,8 @@ plt.legend()
 
 #Plot the testing data
 plt.figure()
-plt.scatter(np.arange(0,training_len),k_norm[training_len:training_len]*np.max(k), label='$\kappa$ true')
-plt.scatter(np.arange(0,training_len),total_result[training_len:training_len]*np.max(k), label='$\kappa$ pred')
+plt.scatter(np.arange(0,testing_len),k_norm[training_len:total_len]*np.max(k), label='$\kappa$ true')
+plt.scatter(np.arange(0,testing_len),total_result[training_len:total_len]*np.max(k), label='$\kappa$ pred')
 plt.title('Permeabilitas Kozeny Carman vs CNN Data Testing')
 plt.xlabel('Subsampel')
 plt.ylabel('$\phi^3/ssa^2$')
