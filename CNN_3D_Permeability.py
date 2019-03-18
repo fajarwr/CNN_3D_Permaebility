@@ -176,8 +176,8 @@ testing_result = {
         }
 training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
-training_result_df.to_excel('..\\..\\005_Result\\Training_CNN3D_002.xlsx')
-testing_result_df.to_excel('..\\..\\005_Result\\Testing_CNN3D_002.xlsx')
+training_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Training_CNN3D_002.xlsx')
+testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_002.xlsx')
 
 
 #Plot the training data
