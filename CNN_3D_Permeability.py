@@ -142,7 +142,7 @@ model.compile(optimizer='Adam', loss='mean_squared_error', metrics=[r2_keras],
               target_tensors=None)
 
 #This checkpoint object will store the model parameters in the file "weights.hdf5"
-checkpoint = ModelCheckpoint(filepath='\\weights4.hdf5', monitor='val_loss')
+checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_002.hdf5', monitor='val_loss')
 
 #Change to data directory
 os.chdir(sys.path[0])
@@ -157,7 +157,7 @@ history_df = pd.DataFrame.from_dict(history.history)
 history_df.to_excel('..\\..\\005_Result\\History_CNN3D_002.xlsx')
 
 #Load the model and plot the data
-model.load_weights('weights4.hdf5')
+model.load_weights('..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_002.hdf5')
 
 #Store the training & testing result
 total_result = model.predict_generator(generator=total_generator, steps=None,
