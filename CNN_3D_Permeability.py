@@ -41,15 +41,14 @@ dim1,dim2,dim3,chn = 100,100,100,1
 training_list = 90
 testing_list = 10
 total_list = training_list + testing_list
-image3D_stack = []
 phi = []
 ssa = []
-os.chdir('..\\002_Data\\Berea Sandstone')
-for image3D_dir in os.listdir(os.getcwd())[:total_list]:
+os.chdir('..\\002_Data\\Berea_Sandstone_npy')
+for image3D_npy in os.listdir(os.getcwd())[:total_list]:
     phi.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
-                image3D_dir)][1])
+                image3D_npy)][1])
     ssa.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
-                image3D_dir)][2])
+                image3D_npy)][2])
 k = np.power(1-np.array(phi), 3)/np.power(ssa, 2)
 k_norm = k/np.max(k)
 
