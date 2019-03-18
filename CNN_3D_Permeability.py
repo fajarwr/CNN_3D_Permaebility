@@ -27,7 +27,6 @@ def r2_keras(y_true, y_pred):
     SS_tot = K.sum(K.square(y_true - K.mean(y_true)))
     return ( 1 - SS_res/(SS_tot + K.epsilon()) )
 
-
 #Change to script directory
 os.chdir(sys.path[0])
 sys.path.append(os.getcwd())
@@ -35,16 +34,15 @@ sys.path.append(os.getcwd())
 #https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 from DataGenerator_3D_Classes import DataGenerator
 
-
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
-training_list = 90
-testing_list = 10
-total_list = training_list + testing_list
+training_len = 90
+testing_len = 10
+total_len = training_len + training_len
 phi = []
 ssa = []
 os.chdir('..\\002_Data\\Berea_Sandstone_npy')
-for image3D_npy in os.listdir(os.getcwd())[:total_list]:
+for image3D_npy in os.listdir(os.getcwd())[:training_len]:
     phi.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
                 image3D_npy)][1])
     ssa.append([float(s) for s in re.findall('[-+]?\d*\.\d+|\d+',
@@ -67,11 +65,11 @@ params = {'dim': (dim1,dim2,dim3),
 
 #Datasets
 partition = {
-		'train': os.listdir(os.getcwd())[:training_list],
-		'validation': os.listdir(os.getcwd())[training_list:total_list],
-        'total' : os.listdir(os.getcwd())[:total_list]
+		'train': os.listdir(os.getcwd())[:training_len],
+		'validation': os.listdir(os.getcwd())[training_len:training_len],
+        'total' : os.listdir(os.getcwd())[:training_len]
 		}
-labels = dict(zip(os.listdir(os.getcwd())[:total_list], k_norm))
+labels = dict(zip(os.listdir(os.getcwd())[:training_len], k_norm))
 
 # Generators
 training_generator = DataGenerator(partition['train'], labels, **params)
@@ -166,12 +164,12 @@ total_result = model.predict_generator(generator=total_generator, steps=None,
 
 #Save result
 training_result = {
-		'true_training': np.reshape(k_norm[:training_list]*np.max(k),(training_list,)),
-		'pred_training': np.reshape(total_result[:training_list]*np.max(k),(training_list,))
+		'true_training': np.reshape(k_norm[:training_len]*np.max(k),(training_len,)),
+		'pred_training': np.reshape(total_result[:training_len]*np.max(k),(training_len,))
 		}
 testing_result = {
-        'true_testing': np.reshape(k_norm[training_list:total_list]*np.max(k),(testing_list,)),
-		'pred_testing': np.reshape(total_result[training_list:total_list]*np.max(k),(testing_list,))
+        'true_testing': np.reshape(k_norm[training_len:training_len]*np.max(k),(training_len,)),
+		'pred_testing': np.reshape(total_result[training_len:training_len]*np.max(k),(training_len,))
         }
 training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
@@ -181,8 +179,8 @@ testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_002.xlsx')
 
 #Plot the training data
 plt.figure()
-plt.scatter(np.arange(0,training_list),k_norm[:training_list]*np.max(k), label='$\kappa$ true')
-plt.scatter(np.arange(0,training_list),total_result[:training_list]*np.max(k), label='$\kappa$ pred')
+plt.scatter(np.arange(0,training_len),k_norm[:training_len]*np.max(k), label='$\kappa$ true')
+plt.scatter(np.arange(0,training_len),total_result[:training_len]*np.max(k), label='$\kappa$ pred')
 plt.title('Permeabilitas Kozeny Carman vs CNN Data Training')
 plt.xlabel('Subampel')
 plt.ylabel('$\phi^3/ssa^2$')
@@ -190,8 +188,8 @@ plt.legend()
 
 #Plot the testing data
 plt.figure()
-plt.scatter(np.arange(0,testing_list),k_norm[training_list:total_list]*np.max(k), label='$\kappa$ true')
-plt.scatter(np.arange(0,testing_list),total_result[training_list:total_list]*np.max(k), label='$\kappa$ pred')
+plt.scatter(np.arange(0,training_len),k_norm[training_len:training_len]*np.max(k), label='$\kappa$ true')
+plt.scatter(np.arange(0,training_len),total_result[training_len:training_len]*np.max(k), label='$\kappa$ pred')
 plt.title('Permeabilitas Kozeny Carman vs CNN Data Testing')
 plt.xlabel('Subsampel')
 plt.ylabel('$\phi^3/ssa^2$')
