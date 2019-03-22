@@ -1,3 +1,5 @@
+#Datagenerator taken from 
+#https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 import numpy as np
 import keras
 import matplotlib.pyplot as plt
