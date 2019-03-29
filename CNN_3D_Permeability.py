@@ -27,6 +27,20 @@ def r2_keras(y_true, y_pred):
     SS_tot = K.sum(K.square(y_true - K.mean(y_true)))
     return ( 1 - SS_res/(SS_tot + K.epsilon()) )
 
+def merge_histories(histories):
+    loss = []
+    r2_keras = []
+    for history in histories:
+        for loss_val in history.history['loss']:
+            loss.append(loss_val)
+        for r2_keras_val in history.history['r2_keras']:
+            r2_keras.append(r2_keras_val)
+    epochs = range(1, len(loss) + 1)
+    merged_history = {'epochs': epochs,
+                      'loss': loss,
+                      'r2_keras': r2_keras}
+    return merged_history
+
 #Change to script directory
 #os.chdir(sys.path[0])
 os.chdir('E:\\Fajar\\CNN_Permeability\\001_PythonCodes\\CNN_3D_Permaebility')
