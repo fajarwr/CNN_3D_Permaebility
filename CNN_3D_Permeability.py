@@ -37,7 +37,7 @@ from DataGenerator_3D_Classes import DataGenerator
 
 #Experiment number
 exp_num = 5
-os.chdir('..\\005_Result\\CNN_3D')
+os.chdir('..\\..\\005_Result\\CNN_3D')
 if any('00'+str(exp_num) in s for s in os.listdir(os.getcwd())):
     sys.exit('Alert : There is already 00'+str(exp_num)+' experiment result!!')
 
