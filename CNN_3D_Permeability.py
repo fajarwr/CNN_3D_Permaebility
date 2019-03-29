@@ -154,12 +154,23 @@ checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D
 #os.chdir(sys.path[0])
 #os.chdir('..\\002_Data\\Berea_Sandstone_npy')
 
-# Train model on dataset
+#Load histories file if we want to continue previous training
 histories = []
+if any('Histories_00'+str(exp_num) in s for s in os.listdir('..\\..\\005_Result\\CNN_3D')):
+    pickle_in = open('Histories_00'+str(exp_num)+'.pickle','rb')
+    histories = pickle.load(pickle_in)
+
+# Train model on dataset
 histories.append(
         model.fit_generator(generator=training_generator, epochs=1,
                             callbacks=[checkpoint], use_multiprocessing=False)
         )
+        
+#Save the histories file
+pickle_out = open('Histories_00'+str(exp_num)+'.pickle','rb')
+pickle.dump(histories, pickle_out)
+pickle_out.close()
+
 
 #Merge the histories
 history = merge_histories(histories)
