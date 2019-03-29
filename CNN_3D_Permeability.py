@@ -136,8 +136,8 @@ model.compile(optimizer='Adam', loss='mean_squared_error', metrics=[r2_keras],
 checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'.hdf5', monitor='val_loss')
 
 #Change to data directory
-os.chdir(sys.path[0])
-os.chdir('..\\002_Data\\Berea_Sandstone_npy')
+#os.chdir(sys.path[0])
+#os.chdir('..\\002_Data\\Berea_Sandstone_npy')
 
 # Train model on dataset
 history = model.fit_generator(generator=training_generator, epochs=20,
