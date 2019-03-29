@@ -154,11 +154,17 @@ checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D
 #os.chdir('..\\002_Data\\Berea_Sandstone_npy')
 
 # Train model on dataset
-history = model.fit_generator(generator=training_generator, epochs=20,
-                    callbacks=[checkpoint], use_multiprocessing=False)
+histories = []
+histories.append(
+        model.fit_generator(generator=training_generator, epochs=1,
+                            callbacks=[checkpoint], use_multiprocessing=False)
+        )
+
+#Merge the histories
+history = merge_histories(histories)
 
 #Save history
-history_df = pd.DataFrame.from_dict(history.history)
+history_df = pd.DataFrame.from_dict(history)
 history_df.to_excel('..\\..\\005_Result\\CNN_3D\\History_CNN3D_00'+str(exp_num)+'.xlsx')
 
 #Load the model and plot the data
@@ -204,7 +210,7 @@ plt.legend()
 
 #PLot history MSE
 plt.figure()
-plt.plot(history.history['loss'])
+plt.plot(history['loss'])
 plt.title('PLot Nilai Mean Square Error untuk Setiap Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('MSE')
@@ -212,7 +218,7 @@ plt.show()
 
 #Plot history r2_keras
 plt.figure()
-plt.plot(history.history['r2_keras'])
+plt.plot(history['r2_keras'])
 plt.title('PLot Nilai $R^2$ untuk Setiap Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('$R^2$')
