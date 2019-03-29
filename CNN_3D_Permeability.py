@@ -20,6 +20,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, r2_score
 from sklearn.model_selection import train_test_split
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
+import pickle
 
 #Define r square matric
 def r2_keras(y_true, y_pred):
