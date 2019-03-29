@@ -28,7 +28,8 @@ def r2_keras(y_true, y_pred):
     return ( 1 - SS_res/(SS_tot + K.epsilon()) )
 
 #Change to script directory
-os.chdir(sys.path[0])
+#os.chdir(sys.path[0])
+os.chdir('E:\\Fajar\\CNN_Permeability\\001_PythonCodes\\CNN_3D_Permaebility')
 sys.path.append(os.getcwd())
 #Import datagenerator taken from 
 #https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
