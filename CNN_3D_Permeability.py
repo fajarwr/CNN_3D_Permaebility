@@ -53,8 +53,8 @@ from DataGenerator_3D_Classes import DataGenerator
 #Experiment number
 exp_num = 5
 os.chdir('..\\..\\005_Result\\CNN_3D')
-if any('00'+str(exp_num) in s for s in os.listdir(os.getcwd())):
-    sys.exit('Alert : There is already 00'+str(exp_num)+' experiment result!!')
+#if any('00'+str(exp_num) in s for s in os.listdir(os.getcwd())):
+#    sys.exit('Alert : There is already 00'+str(exp_num)+' experiment result!!')
 
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
@@ -157,7 +157,7 @@ checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D
 #Load histories file if we want to continue previous training
 histories = []
 if any('Histories_00'+str(exp_num) in s for s in os.listdir('..\\..\\005_Result\\CNN_3D')):
-    pickle_in = open('Histories_00'+str(exp_num)+'.pickle','rb')
+    pickle_in = open('..\\..\\005_Result\\CNN_3D\\Histories_00'+str(exp_num)+'.pickle','rb')
     histories = pickle.load(pickle_in)
 
 # Train model on dataset
@@ -167,7 +167,7 @@ histories.append(
         )
         
 #Save the histories file
-pickle_out = open('Histories_00'+str(exp_num)+'.pickle','rb')
+pickle_out = open('..\\..\\005_Result\\CNN_3D\\Histories_00'+str(exp_num)+'.pickle','wb')
 pickle.dump(histories, pickle_out)
 pickle_out.close()
 
