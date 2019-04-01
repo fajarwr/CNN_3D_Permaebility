@@ -131,7 +131,7 @@ os.chdir('..\\..\\002_Data\\Berea_Sandstone_npy')
 
 # Train model on dataset
 history = model.fit_generator(generator=training_generator, epochs=20,
-                    callbacks=[checkpoint], workers=1, use_multiprocessing=False)
+                    callbacks=[checkpoint], workers=-1, use_multiprocessing=True)
 
 #Save history
 history_df = pd.DataFrame.from_dict(history.history)
@@ -142,8 +142,8 @@ model.load_weights('..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'
 
 #Store the training & testing result
 total_result = model.predict_generator(generator=total_generator, steps=None,
-                                  max_queue_size=10, workers=1,
-                                  use_multiprocessing=False, verbose=0)
+                                  max_queue_size=10, workers=-1,
+                                  use_multiprocessing=True, verbose=0)
 
 #Save result
 training_result = {
