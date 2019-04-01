@@ -2,7 +2,6 @@ import numpy as np
 import keras
 import matplotlib.pyplot as plt
 import os
-import cv2
 
 
 class DataGenerator(keras.utils.Sequence):
