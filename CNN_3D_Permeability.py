@@ -20,7 +20,6 @@ from sklearn.metrics import confusion_matrix, accuracy_score, r2_score
 from sklearn.model_selection import train_test_split
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
-import pickle
 
 #Define r square matric
 def r2_keras(y_true, y_pred):
@@ -28,33 +27,18 @@ def r2_keras(y_true, y_pred):
     SS_tot = K.sum(K.square(y_true - K.mean(y_true)))
     return ( 1 - SS_res/(SS_tot + K.epsilon()) )
 
-def merge_histories(histories):
-    loss = []
-    r2_keras = []
-    for history in histories:
-        for loss_val in history.history['loss']:
-            loss.append(loss_val)
-        for r2_keras_val in history.history['r2_keras']:
-            r2_keras.append(r2_keras_val)
-    epochs = range(1, len(loss) + 1)
-    merged_history = {'epochs': epochs,
-                      'loss': loss,
-                      'r2_keras': r2_keras}
-    return merged_history
-
 #Change to script directory
-#os.chdir(sys.path[0])
-os.chdir('E:\\Fajar\\CNN_Permeability\\001_PythonCodes\\CNN_3D_Permaebility')
+os.chdir(sys.path[0])
 sys.path.append(os.getcwd())
 #Import datagenerator taken from 
 #https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 from DataGenerator_3D_Classes import DataGenerator
 
 #Experiment number
-exp_num = 5
+exp_num = 8
 os.chdir('..\\..\\005_Result\\CNN_3D')
-#if any('00'+str(exp_num) in s for s in os.listdir(os.getcwd())):
-#    sys.exit('Alert : There is already 00'+str(exp_num)+' experiment result!!')
+if any('00'+str(exp_num) in s for s in os.listdir(os.getcwd())):
+    sys.exit('Alert : There is already 00'+str(exp_num)+' experiment result!!')
 
 #Load the data
 dim1,dim2,dim3,chn = 100,100,100,1
@@ -123,9 +107,21 @@ model.add(Conv3D(32, kernel_size=3, strides=(1, 1, 1), padding='valid',
                  kernel_regularizer=None, bias_regularizer=None, 
                  activity_regularizer=None, kernel_constraint=None,
                  bias_constraint=None))
+model.add(Conv3D(32, kernel_size=3, strides=(1, 1, 1), padding='valid',
+                 data_format='channels_last', dilation_rate=(1, 1, 1),
+                 activation='relu', use_bias=True,
+                 kernel_initializer='glorot_uniform', bias_initializer='zeros',
+                 kernel_regularizer=None, bias_regularizer=None, 
+                 activity_regularizer=None, kernel_constraint=None,
+                 bias_constraint=None))
 model.add(MaxPooling3D(pool_size=(2, 2, 2), strides=(1, 1, 1), padding='valid',
                        data_format='channels_last'))
 model.add(Flatten(data_format='channels_last'))
+model.add(Dense(128, activation='relu', use_bias=True,
+                kernel_initializer='glorot_uniform', bias_initializer='zeros',
+                kernel_regularizer=None, bias_regularizer=None,
+                activity_regularizer=None, kernel_constraint=None,
+                bias_constraint=None))
 model.add(Dense(128, activation='relu', use_bias=True,
                 kernel_initializer='glorot_uniform', bias_initializer='zeros',
                 kernel_regularizer=None, bias_regularizer=None,
@@ -151,33 +147,16 @@ model.compile(optimizer='Adam', loss='mean_squared_error', metrics=[r2_keras],
 checkpoint = ModelCheckpoint(filepath='..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'.hdf5', monitor='val_loss')
 
 #Change to data directory
-#os.chdir(sys.path[0])
-#os.chdir('..\\002_Data\\Berea_Sandstone_npy')
-
-#Load histories file if we want to continue previous training
-histories = []
-if any('Histories_00'+str(exp_num) in s for s in os.listdir('..\\..\\005_Result\\CNN_3D')):
-    pickle_in = open('..\\..\\005_Result\\CNN_3D\\Histories_00'+str(exp_num)+'.pickle','rb')
-    histories = pickle.load(pickle_in)
+os.chdir(sys.path[0])
+os.chdir('..\\..\\002_Data\\Berea_Sandstone_npy')
 
 # Train model on dataset
-histories.append(
-        model.fit_generator(generator=training_generator, epochs=1,
-                            callbacks=[checkpoint], use_multiprocessing=False)
-        )
-        
-#Save the histories file
-pickle_out = open('..\\..\\005_Result\\CNN_3D\\Histories_00'+str(exp_num)+'.pickle','wb')
-pickle.dump(histories, pickle_out)
-pickle_out.close()
-
-
-#Merge the histories
-history = merge_histories(histories)
+history = model.fit_generator(generator=training_generator, epochs=20,
+                    callbacks=[checkpoint], workers=1, use_multiprocessing=False)
 
 #Save history
-history_df = pd.DataFrame.from_dict(history)
-history_df.to_excel('..\\..\\005_Result\\CNN_3D\\History_CNN3D_00'+str(exp_num)+'.xlsx')
+history_df = pd.DataFrame.from_dict(history.history)
+history_df.to_excel('..\\..\\005_Result\\History_CNN3D_00'+str(exp_num)+'.xlsx')
 
 #Load the model and plot the data
 model.load_weights('..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'.hdf5')
@@ -222,7 +201,7 @@ plt.legend()
 
 #PLot history MSE
 plt.figure()
-plt.plot(history['loss'])
+plt.plot(history.history['loss'])
 plt.title('PLot Nilai Mean Square Error untuk Setiap Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('MSE')
@@ -230,7 +209,7 @@ plt.show()
 
 #Plot history r2_keras
 plt.figure()
-plt.plot(history['r2_keras'])
+plt.plot(history.history['r2_keras'])
 plt.title('PLot Nilai $R^2$ untuk Setiap Epoch')
 plt.xlabel('Epoch')
 plt.ylabel('$R^2$')
