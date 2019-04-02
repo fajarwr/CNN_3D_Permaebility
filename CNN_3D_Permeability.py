@@ -127,6 +127,11 @@ model.add(Dense(128, activation='relu', use_bias=True,
                 kernel_regularizer=None, bias_regularizer=None,
                 activity_regularizer=None, kernel_constraint=None,
                 bias_constraint=None))
+model.add(Dense(128, activation='relu', use_bias=True,
+                kernel_initializer='glorot_uniform', bias_initializer='zeros',
+                kernel_regularizer=None, bias_regularizer=None,
+                activity_regularizer=None, kernel_constraint=None,
+                bias_constraint=None))
 model.add(Dense(64, activation='relu', use_bias=True,
                 kernel_initializer='glorot_uniform', bias_initializer='zeros',
                 kernel_regularizer=None, bias_regularizer=None,
