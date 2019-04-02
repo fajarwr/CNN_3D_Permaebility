@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style('white')
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, r2_score
 import os
 import sys
 import matplotlib.pyplot as plt
@@ -156,7 +156,7 @@ history = model.fit_generator(generator=training_generator, epochs=20,
 
 #Save history
 history_df = pd.DataFrame.from_dict(history.history)
-history_df.to_excel('..\\..\\005_Result\\History_CNN3D_00'+str(exp_num)+'.xlsx')
+history_df.to_excel('..\\..\\005_Result\\CNN_3D\\History_CNN3D_00'+str(exp_num)+'.xlsx')
 
 #Load the model and plot the data
 model.load_weights('..\\..\\005_Result\\CNN_3D\\Weights_CNN3D_00'+str(exp_num)+'.hdf5')
@@ -177,7 +177,8 @@ testing_result = {
         }
 training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
-training_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Training_CNN3D_00'+str(exp_num)+'.xlsx')
+training_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Training_CNN3D_00'+
+                            str(exp_num)+'_'+str(r2_score (k_norm[:training_len]*np.max(k), total_result[:training_len]*np.max(k)))+'.xlsx')
 testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_00'+str(exp_num)+'.xlsx')
 
 
