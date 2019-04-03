@@ -184,7 +184,8 @@ training_result_df = pd.DataFrame.from_dict(training_result)
 testing_result_df = pd.DataFrame.from_dict(testing_result)
 training_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Training_CNN3D_00'+
                             str(exp_num)+'_'+str(r2_score (k_norm[:training_len]*np.max(k), total_result[:training_len]*np.max(k)))+'.xlsx')
-testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_00'+str(exp_num)+'.xlsx')
+testing_result_df.to_excel('..\\..\\005_Result\\CNN_3D\\Testing_CNN3D_00'+
+                           str(exp_num)+'_'+str(r2_score(k_norm[training_len:total_len]*np.max(k), total_result[training_len:total_len]*np.max(k)))+'.xlsx')
 
 
 #Plot the training data
